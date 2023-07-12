@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Messaging;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,20 +11,22 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }*/
-    public PlayerInputControl InputControl;
-    public Vector2 inputValue;
 
+    public PlayerInputControl InputControl; //定义的输入类
+    public Vector2 inputValue;              //输入的数值
+    private Rigidbody2D rb;                 //玩家的2D刚体类
+
+    [Header("基本参数")]
+    public float speed;                     //玩家的速度
+    public float jump_force;               //玩家跳跃的力
 
     private void Awake()
     {
+        rb = GetComponent<Rigidbody2D>();
+
         InputControl = new PlayerInputControl();
+        InputControl.Gameplay.Jump.started += Jump;
     }
 
     private void OnEnable()
@@ -38,5 +42,34 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         inputValue = InputControl.Gameplay.Move.ReadValue<Vector2>();
+    }
+
+    private void FixedUpdate()      //2D刚体的固定更新
+    {
+        Move();
+    }
+
+    private void Move()
+    {
+        rb.velocity = new Vector2(inputValue.x * speed * Time.deltaTime, rb.velocity.y );
+
+        //人物翻转
+        int faceDir = (int) transform.localScale.x;
+        if(inputValue.x > 0)
+        {
+            faceDir = 1;
+        }
+        if(inputValue.x < 0)
+        {
+            faceDir = -1;
+        }
+
+        transform.localScale = new Vector3(faceDir, transform.localScale.y, transform.localScale.z);
+    }
+
+    private void Jump(InputAction.CallbackContext obj)
+    {
+        //Debug.Log("JUMP!!!");
+        rb.AddForce(transform.up * jump_force, ForceMode2D.Impulse);
     }
 }
