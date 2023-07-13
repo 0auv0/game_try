@@ -16,14 +16,18 @@ public class PlayerController : MonoBehaviour
     public PlayerInputControl InputControl; //定义的输入类
     public Vector2 inputValue;              //输入的数值
     private Rigidbody2D rb;                 //玩家的2D刚体类
+    public PhysicsCheck physicsCheck;
 
     [Header("基本参数")]
     public float speed;                     //玩家的速度
     public float jump_force;               //玩家跳跃的力
 
+
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        physicsCheck = GetComponent<PhysicsCheck>();
 
         InputControl = new PlayerInputControl();
         InputControl.Gameplay.Jump.started += Jump;
@@ -70,6 +74,10 @@ public class PlayerController : MonoBehaviour
     private void Jump(InputAction.CallbackContext obj)
     {
         //Debug.Log("JUMP!!!");
-        rb.AddForce(transform.up * jump_force, ForceMode2D.Impulse);
+        if(physicsCheck.isGround)
+        {
+            rb.AddForce(transform.up * jump_force, ForceMode2D.Impulse);
+        }
+        
     }
 }
