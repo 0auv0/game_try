@@ -6,13 +6,15 @@ public class PlayerAnimation : MonoBehaviour
 {
     private Animator anim;
     private Rigidbody2D rb;
-    private PhysicsCheck pc;
+    private PhysicsCheck physicsCheck;
+    private PlayerController playerController;
 
     private void Awake()
     {
         anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
-        pc = GetComponent<PhysicsCheck>();
+        physicsCheck = GetComponent<PhysicsCheck>();
+        playerController = GetComponent<PlayerController>();
     }
 
     private void Update()
@@ -24,6 +26,13 @@ public class PlayerAnimation : MonoBehaviour
     {
         anim.SetFloat("velocity",Mathf.Abs(rb.velocity.x));
         anim.SetFloat("velocity_y", rb.velocity.y);
-        anim.SetBool("isGround", pc.isGround);
+        anim.SetBool("isGround", physicsCheck.isGround);
+        anim.SetBool("isDead", playerController.isDead);
     }
+
+    public void PlayHurt()
+    {
+        anim.SetTrigger("hurt");
+    }
+
 }

@@ -22,7 +22,10 @@ public class PlayerController : MonoBehaviour
     public float speed;                     //玩家的速度
     public float jump_force;               //玩家跳跃的力
 
+    public float HurtForce;                 //受伤获得的力
+    public bool isHurt;
 
+    public bool isDead;
 
     private void Awake()
     {
@@ -50,7 +53,11 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()      //2D刚体的固定更新
     {
-        Move();
+        if (!isHurt)
+        {
+            Move();
+        }
+        
     }
 
     private void Move()
@@ -80,4 +87,22 @@ public class PlayerController : MonoBehaviour
         }
         
     }
+
+    public void GetHurt(Transform attacker)
+    {
+        isHurt = true;
+        rb.velocity = Vector2.zero;
+        Vector2 new_dir = new Vector2((transform.position.x - attacker.position.x),0).normalized;
+
+
+        rb.AddForce(new_dir * HurtForce, ForceMode2D.Impulse);
+    }
+
+    public void GetDeath()
+    {
+        isDead = true;
+        InputControl.Gameplay.Disable();
+    }
+
+
 }
