@@ -39,7 +39,7 @@ public class Character : MonoBehaviour
 
     public void take_damage(Attack attacker)
     {
-        if (is_invincible)
+        if (is_invincible || attacker.damage <= 0)
         {
             return;
         }
